@@ -1,0 +1,21 @@
+user gateway
+topic write gateway/system/metrics
+topic write gateway/aggregated_report
+topic read gateway/command/#
+topic read sensor/+/data
+
+user dashboard
+topic read gateway/system/metrics
+topic read gateway/aggregated_report
+
+user operator
+topic readwrite gateway/test
+topic write gateway/command/#
+topic read gateway/system/metrics
+topic read gateway/aggregated_report
+
+user node1
+topic write sensor/node1/data
+
+user node2
+topic write sensor/node2/data

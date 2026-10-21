@@ -1,0 +1,103 @@
+{
+  "tested_at": "2026-10-20T00:19:26.977978+00:00",
+  "results": [
+    {
+      "name": "Bai 1-2: local broker and CLI publish",
+      "passed": true,
+      "evidence": "Hello Local MQTT"
+    },
+    {
+      "name": "Bai 2: native mosquitto_sub",
+      "passed": true,
+      "evidence": "Hello Local MQTT"
+    },
+    {
+      "name": "Ve nha 2: reject anonymous",
+      "passed": true,
+      "evidence": "Connection error: Connection Refused: not authorised\nError: The connection was refused"
+    },
+    {
+      "name": "Ve nha 2: reject wrong password",
+      "passed": true,
+      "evidence": "Connection error: Connection Refused: not authorised\nError: The connection was refused"
+    },
+    {
+      "name": "Ve nha 2: ACL prevents sensor commands",
+      "passed": true,
+      "evidence": "Warning: Publish 1 failed: Not authorized."
+    },
+    {
+      "name": "Bai 3: Paho connection callback",
+      "passed": true,
+      "evidence": "CONNECTED 127.0.0.1:18885\nKet noi MQTT thanh cong"
+    },
+    {
+      "name": "Bai 5: wildcard command callback",
+      "passed": true,
+      "evidence": "gateway/command/led -> ON"
+    },
+    {
+      "name": "Bai 4: real CPU/RAM every 5s",
+      "passed": true,
+      "evidence": {
+        "intervals_seconds": [
+          5.02,
+          4.98
+        ],
+        "sample": {
+          "gateway_id": "LAPTOP-JDTO3CKC",
+          "timestamp": "2026-10-20T00:19:10.933482+00:00",
+          "cpu_percent": 18.7,
+          "ram_percent": 89.4,
+          "ram_used_bytes": 15106527232,
+          "ram_total_bytes": 16891633664
+        }
+      }
+    },
+    {
+      "name": "Ve nha 1: aggregate nodes every 10s",
+      "passed": true,
+      "evidence": {
+        "interval_seconds": 10.02,
+        "report": {
+          "window_start": "2026-10-20T00:19:05.892493+00:00",
+          "timestamp": "2026-10-20T00:19:15.907320+00:00",
+          "node_count": 2,
+          "message_count": 3,
+          "nodes": {
+            "node1": {
+              "data": {
+                "temperature_c": 29,
+                "sequence": 2
+              },
+              "received_at": "2026-10-20T00:19:06.054893+00:00"
+            },
+            "node2": {
+              "data": {
+                "humidity_percent": 70
+              },
+              "received_at": "2026-10-20T00:19:06.057486+00:00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Ve nha 1: empty window and invalid JSON",
+      "passed": true,
+      "evidence": {
+        "window_start": "2026-10-20T00:19:15.907320+00:00",
+        "timestamp": "2026-10-20T00:19:25.914568+00:00",
+        "node_count": 0,
+        "message_count": 0,
+        "nodes": {}
+      }
+    },
+    {
+      "name": "Ve nha 2: dashboard is read-only",
+      "passed": true,
+      "evidence": "Dashboard publish was not delivered"
+    }
+  ],
+  "error": null
+}

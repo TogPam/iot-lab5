@@ -1,0 +1,16 @@
+.venv/
+.npm-cache/
+downloads/
+tools/
+node-red/node_modules/
+node-red/.config*
+node-red/.sessions.json
+node-red/.runtime.json
+node-red/*_cred.json
+config/credentials.json
+config/passwords
+config/mosquitto-secure.conf
+config/mosquitto-lan.conf
+logs/
+__pycache__/
+*.pyc

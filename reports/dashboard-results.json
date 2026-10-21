@@ -1,0 +1,10 @@
+{
+  "httpStatus": 200,
+  "errors": [],
+  "gaugeValues": [
+    "23.1%",
+    "92.5%"
+  ],
+  "chartPresent": 2,
+  "body": "Gateway Monitor\nGateway Monitor\nCPU / RAM thuc te - cap nhat moi 5 giay\nCPU usage\n0\n100\n23.1\n%\nRAM usage\n0\n100\n92.5\n%\nSensor mo phong - tong hop moi 10 giay\nLatest report\n2 nodes | 7 messages | 2026-10-20T00:09:05.338925+00:00\nSimulated sensor data\nnode\n\t\nsimulated\n\t\ntimestamp\n\t\ntemperature_c\n\t\nhumidity_percent\n\t\nreceived_at\n\n\nnode2\n\t\ntrue\n\t\n2026-10-20T00:09:04.359773+00:00\n\t\n25.38\n\t\n70.18\n\t\n2026-10-20T00:09:04.360841+00:00\n\n\nnode1\n\t\ntrue\n\t\n2026-10-20T00:09:04.325499+00:00\n\t\n29.72\n\t\n72.86\n\t\n2026-10-20T00:09:04.327350+00:00\nApp is offline ready\nClose"
+}

@@ -1,0 +1,151 @@
+[
+  {
+    "folder": "Tren_lop/Bai_1",
+    "title": "Bài 1: Cài đặt và cấu hình Mosquitto Local Broker",
+    "objective": "Cài đặt broker MQTT cục bộ trên gateway và cấu hình địa chỉ lắng nghe.",
+    "files": [
+      "mosquitto.conf",
+      "chay.ps1"
+    ],
+    "commands": [
+      "powershell -ExecutionPolicy Bypass -File scripts\\stop.ps1",
+      "powershell -ExecutionPolicy Bypass -File Tren_lop\\Bai_1\\chay.ps1"
+    ],
+    "expected": "Broker mở cổng 1883 trên 127.0.0.1; sẵn sàng nhận kết nối MQTT trên máy này.",
+    "notes": "Chế độ anonymous chỉ dùng cho bài 1–2 trên loopback. Dừng hệ thống demo trước khi mở broker này để tránh trùng cổng. Kết thúc bằng Ctrl+C, rồi chạy scripts/start.ps1 để trở lại bản bảo mật. Trên Linux, dùng sudo apt install mosquitto mosquitto-clients và sudo systemctl status mosquitto.",
+    "test_prefixes": [
+      "Bai 1-2:"
+    ]
+  },
+  {
+    "folder": "Tren_lop/Bai_2",
+    "title": "Bài 2: Kiểm tra MQTT Client bằng dòng lệnh",
+    "objective": "Dùng mosquitto_sub và mosquitto_pub để kiểm tra truyền nhận bản tin tại gateway/test.",
+    "files": [
+      "nhan.ps1",
+      "gui.ps1"
+    ],
+    "commands": [
+      "powershell -ExecutionPolicy Bypass -File Tren_lop\\Bai_2\\nhan.ps1",
+      "powershell -ExecutionPolicy Bypass -File Tren_lop\\Bai_2\\gui.ps1"
+    ],
+    "expected": "Terminal subscriber hiển thị gateway/test Hello Local MQTT.",
+    "notes": "Chạy broker anonymous của bài 1 trước. Mở hai terminal, chạy nhan.ps1 trước rồi gui.ps1. Kết thúc subscriber bằng Ctrl+C. Nếu dùng broker bảo mật đang chạy, xem lệnh scripts/mqtt_cli.py trong README gốc.",
+    "test_prefixes": [
+      "Bai 2:"
+    ]
+  },
+  {
+    "folder": "Tren_lop/Bai_3",
+    "title": "Bài 3: Cài Paho-MQTT và kiểm tra kết nối Python",
+    "objective": "Tạo môi trường ảo Python, cài Paho-MQTT và xác minh callback kết nối broker thành công.",
+    "files": [
+      "check_connection.py",
+      "chay.ps1"
+    ],
+    "commands": [
+      "powershell -ExecutionPolicy Bypass -File scripts\\start.ps1",
+      "powershell -ExecutionPolicy Bypass -File Tren_lop\\Bai_3\\chay.ps1"
+    ],
+    "expected": "CONNECTED 127.0.0.1:1883 và Ket noi MQTT thanh cong.",
+    "notes": "Chỉ chạy start.ps1 nếu hệ thống chưa chạy. Paho dùng CallbackAPIVersion.VERSION2; Session ở gateway/common.py chờ CONNACK trước khi xác nhận thành công. Truyền --anonymous khi thử broker bài 1. Cài thư viện: .venv/Scripts/python.exe -m pip install -r requirements.txt.",
+    "test_prefixes": [
+      "Bai 3:"
+    ]
+  },
+  {
+    "folder": "Tren_lop/Bai_4",
+    "title": "Bài 4: Publish thông số CPU và RAM mỗi 5 giây",
+    "objective": "Đọc CPU/RAM thật bằng psutil, đóng gói JSON và gửi gateway/system/metrics định kỳ.",
+    "files": [
+      "metrics_publisher.py",
+      "chay.ps1"
+    ],
+    "commands": [
+      "powershell -ExecutionPolicy Bypass -File Tren_lop\\Bai_4\\chay.ps1",
+      ".\\.venv\\Scripts\\python.exe scripts\\mqtt_cli.py sub -t gateway/system/metrics -v"
+    ],
+    "expected": "Một bản tin JSON mỗi 5 giây gồm cpu_percent, ram_percent, ram_used_bytes, ram_total_bytes, gateway_id và timestamp.",
+    "notes": "Cần broker bảo mật đang chạy. Hệ thống demo đã có một publisher; chỉ chạy thêm nếu muốn thử riêng. Chạy hữu hạn: python -m Tren_lop.Bai_4.metrics_publisher --count 3. Timestamp dùng UTC; đây là số đo thật của máy Windows, không phải số liệu cảm biến mô phỏng.",
+    "test_prefixes": [
+      "Bai 4:"
+    ]
+  },
+  {
+    "folder": "Tren_lop/Bai_5",
+    "title": "Bài 5: Subscribe lắng nghe lệnh điều khiển",
+    "objective": "Đăng ký wildcard gateway/command/# và in các lệnh nhận được trong callback on_message.",
+    "files": [
+      "command_subscriber.py",
+      "chay.ps1",
+      "gui_lenh.ps1"
+    ],
+    "commands": [
+      "powershell -ExecutionPolicy Bypass -File Tren_lop\\Bai_5\\chay.ps1",
+      "powershell -ExecutionPolicy Bypass -File Tren_lop\\Bai_5\\gui_lenh.ps1"
+    ],
+    "expected": "Subscriber in COMMAND, thời gian, topic gateway/command/led và nội dung LED_ON.",
+    "notes": "Mở hai terminal: chạy subscriber trước rồi gửi lệnh bằng tài khoản operator. Bản demo cũng ghi lệnh vào logs/commands.log. Chưa có thiết bị chấp hành thật để bật/tắt LED; bài này kiểm tra nhận và in lệnh.",
+    "test_prefixes": [
+      "Bai 5:"
+    ]
+  },
+  {
+    "folder": "Ve_nha/Bai_1",
+    "title": "Bài 1 về nhà: Gateway tổng hợp dữ liệu cảm biến",
+    "objective": "Subscribe sensor/+/data, gom bản tin của nhiều node và publish một báo cáo JSON mỗi 10 giây.",
+    "files": [
+      "aggregator.py",
+      "sensor_simulator.py",
+      "chay.ps1",
+      "sensor_node1.ps1",
+      "sensor_node2.ps1"
+    ],
+    "commands": [
+      "powershell -ExecutionPolicy Bypass -File Ve_nha\\Bai_1\\chay.ps1",
+      "powershell -ExecutionPolicy Bypass -File Ve_nha\\Bai_1\\sensor_node1.ps1",
+      "powershell -ExecutionPolicy Bypass -File Ve_nha\\Bai_1\\sensor_node2.ps1",
+      ".\\.venv\\Scripts\\python.exe scripts\\mqtt_cli.py sub -t gateway/aggregated_report -v"
+    ],
+    "expected": "Báo cáo có window_start, timestamp, node_count, message_count và nodes; mỗi node giữ JSON hợp lệ mới nhất trong cửa sổ 10 giây.",
+    "notes": "Mỗi lệnh chạy trong terminal riêng, dùng broker bảo mật. Hệ thống demo đã chạy aggregator và hai sensor. Dữ liệu sensor được mô phỏng, có simulated=true. JSON lỗi bị bỏ qua; bộ đệm được bảo vệ bằng khóa luồng. Cửa sổ không có dữ liệu gửi node_count=0; publish lỗi sẽ khôi phục bộ đệm.",
+    "test_prefixes": [
+      "Ve nha 1:"
+    ]
+  },
+  {
+    "folder": "Ve_nha/Bai_2",
+    "title": "Bài 2 về nhà: Bảo mật xác thực và phân quyền broker",
+    "objective": "Tắt truy cập anonymous, tạo tài khoản bằng mosquitto_passwd và kiểm chứng từ chối đăng nhập hoặc thao tác không hợp lệ.",
+    "files": [
+      "cau_hinh_bao_mat.py",
+      "acl",
+      "mosquitto-secure.conf.example",
+      "kiem_tra.ps1"
+    ],
+    "commands": [
+      "powershell -ExecutionPolicy Bypass -File Ve_nha\\Bai_2\\kiem_tra.ps1"
+    ],
+    "expected": "Anonymous và mật khẩu sai bị từ chối; node1 không gửi được lệnh; dashboard chỉ đọc dữ liệu.",
+    "notes": "Tài khoản thực nằm ở config/credentials.json, mật khẩu băm ở config/passwords; không sao chép bí mật vào thư mục bài nộp. File .example dùng đường dẫn tương đối từ thư mục gốc lab. Muốn tạo lại cấu hình: dừng demo, chạy python -m Ve_nha.Bai_2.cau_hinh_bao_mat rồi khởi động lại. Giữ nguyên mật khẩu nếu tài khoản đã có. mosquitto_passwd -U chuyển tệp tạm chứa mật khẩu sang hash có salt.",
+    "test_prefixes": [
+      "Ve nha 2:"
+    ]
+  },
+  {
+    "folder": "Ve_nha/Bai_3",
+    "title": "Bài 3 về nhà: Node-RED Dashboard cục bộ",
+    "objective": "Nhận dữ liệu MQTT bằng Node-RED và hiển thị CPU/RAM bằng Gauge, Chart cùng bảng dữ liệu sensor.",
+    "files": [
+      "flows.json",
+      "settings.js",
+      "chay.ps1"
+    ],
+    "commands": [
+      "powershell -ExecutionPolicy Bypass -File Ve_nha\\Bai_3\\chay.ps1"
+    ],
+    "expected": "Dashboard tại http://127.0.0.1:1880/dashboard/gateway có hai Gauge CPU/RAM, biểu đồ lịch sử và bảng hai cảm biến mô phỏng.",
+    "notes": "chay.ps1 khởi động cả hệ thống nếu chưa chạy, sau đó in địa chỉ dashboard. Flow trong thư mục này là bản để xem/import; flow chạy thực nằm ở node-red/flows.json và được sinh đồng thời bởi scripts/build_flow.py. Node-RED dùng tài khoản dashboard, chỉ có quyền đọc metrics/report. Khi import sang máy khác cần nhập tài khoản broker rồi Deploy. Môi trường chạy nằm chung ở node-red/ để tránh cài lặp thư viện.",
+    "test_prefixes": []
+  }
+]

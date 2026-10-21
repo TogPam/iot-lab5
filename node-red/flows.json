@@ -1,0 +1,358 @@
+[
+  {
+    "id": "lab5-lab5",
+    "type": "tab",
+    "label": "Lab 5 - Local MQTT Gateway",
+    "disabled": false,
+    "info": "CPU/RAM: 5s; sensor aggregation: 10s"
+  },
+  {
+    "id": "lab5-mqtt-local",
+    "type": "mqtt-broker",
+    "name": "Mosquitto authenticated local",
+    "broker": "127.0.0.1",
+    "port": "1883",
+    "clientid": "lab5-dashboard",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "30",
+    "cleansession": true,
+    "autoUnsubscribe": true
+  },
+  {
+    "id": "lab5-base",
+    "type": "ui-base",
+    "name": "Lab 5 Gateway",
+    "path": "/dashboard",
+    "appIcon": "mdi-router-wireless",
+    "includeClientData": true,
+    "acceptClientConfig": [],
+    "showPathInSidebar": false,
+    "headerContent": "page",
+    "navigationStyle": "default",
+    "titleBarStyle": "default",
+    "showReconnectNotification": true
+  },
+  {
+    "id": "lab5-theme",
+    "type": "ui-theme",
+    "name": "Gateway",
+    "colors": {
+      "surface": "#ffffff",
+      "primary": "#087f8c",
+      "bgPage": "#f1f5f9",
+      "groupBg": "#ffffff",
+      "groupOutline": "#dbe4ed"
+    },
+    "sizes": {
+      "density": "default",
+      "pagePadding": "20px",
+      "groupGap": "16px",
+      "groupBorderRadius": "8px",
+      "widgetGap": "12px"
+    }
+  },
+  {
+    "id": "lab5-page",
+    "type": "ui-page",
+    "name": "Gateway Monitor",
+    "ui": "lab5-base",
+    "path": "/gateway",
+    "icon": "router-wireless",
+    "layout": "grid",
+    "theme": "lab5-theme",
+    "order": 1,
+    "visible": true,
+    "disabled": false,
+    "breakpoints": [
+      {
+        "name": "Default",
+        "px": 0,
+        "cols": 3
+      },
+      {
+        "name": "Tablet",
+        "px": 576,
+        "cols": 6
+      },
+      {
+        "name": "Desktop",
+        "px": 1024,
+        "cols": 12
+      }
+    ]
+  },
+  {
+    "id": "lab5-system",
+    "type": "ui-group",
+    "name": "CPU / RAM thuc te - cap nhat moi 5 giay",
+    "page": "lab5-page",
+    "width": 12,
+    "height": 1,
+    "order": 1,
+    "showTitle": true,
+    "visible": true,
+    "disabled": false,
+    "groupType": "default"
+  },
+  {
+    "id": "lab5-sensors",
+    "type": "ui-group",
+    "name": "Sensor mo phong - tong hop moi 10 giay",
+    "page": "lab5-page",
+    "width": 12,
+    "height": 1,
+    "order": 2,
+    "showTitle": true,
+    "visible": true,
+    "disabled": false,
+    "groupType": "default"
+  },
+  {
+    "id": "lab5-mqtt-metrics",
+    "type": "mqtt in",
+    "z": "lab5-lab5",
+    "name": "System metrics",
+    "topic": "gateway/system/metrics",
+    "qos": "1",
+    "datatype": "json",
+    "broker": "lab5-mqtt-local",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 140,
+    "y": 100,
+    "wires": [
+      [
+        "lab5-split-metrics"
+      ]
+    ]
+  },
+  {
+    "id": "lab5-split-metrics",
+    "type": "function",
+    "z": "lab5-lab5",
+    "name": "CPU / RAM",
+    "outputs": 2,
+    "x": 370,
+    "y": 100,
+    "func": "const p = msg.payload;\nif (!p || !Number.isFinite(p.cpu_percent) || !Number.isFinite(p.ram_percent)) return null;\nreturn [{payload:p.cpu_percent,topic:'CPU'}, {payload:p.ram_percent,topic:'RAM'}];",
+    "wires": [
+      [
+        "lab5-cpu",
+        "lab5-chart"
+      ],
+      [
+        "lab5-ram",
+        "lab5-chart"
+      ]
+    ]
+  },
+  {
+    "id": "lab5-cpu",
+    "type": "ui-gauge",
+    "z": "lab5-lab5",
+    "name": "CPU",
+    "group": "lab5-system",
+    "order": 1,
+    "width": 6,
+    "height": 3,
+    "gtype": "gauge-half",
+    "gstyle": "needle",
+    "title": "CPU usage",
+    "units": "%",
+    "value": "payload",
+    "valueType": "msg",
+    "min": 0,
+    "max": 100,
+    "segments": [
+      {
+        "color": "#16a34a",
+        "from": 0
+      },
+      {
+        "color": "#f59e0b",
+        "from": 70
+      },
+      {
+        "color": "#dc2626",
+        "from": 90
+      }
+    ],
+    "sizeThickness": 16,
+    "sizeGap": 4,
+    "sizeKeyThickness": 8,
+    "styleRounded": true,
+    "styleGlow": false,
+    "x": 620,
+    "y": 80,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "lab5-ram",
+    "type": "ui-gauge",
+    "z": "lab5-lab5",
+    "name": "RAM",
+    "group": "lab5-system",
+    "order": 2,
+    "width": 6,
+    "height": 3,
+    "gtype": "gauge-half",
+    "gstyle": "needle",
+    "title": "RAM usage",
+    "units": "%",
+    "value": "payload",
+    "valueType": "msg",
+    "min": 0,
+    "max": 100,
+    "segments": [
+      {
+        "color": "#16a34a",
+        "from": 0
+      },
+      {
+        "color": "#f59e0b",
+        "from": 70
+      },
+      {
+        "color": "#dc2626",
+        "from": 90
+      }
+    ],
+    "sizeThickness": 16,
+    "sizeGap": 4,
+    "sizeKeyThickness": 8,
+    "styleRounded": true,
+    "styleGlow": false,
+    "x": 620,
+    "y": 150,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "lab5-chart",
+    "type": "ui-chart",
+    "z": "lab5-lab5",
+    "name": "CPU and RAM history",
+    "group": "lab5-system",
+    "label": "CPU / RAM history (%)",
+    "order": 3,
+    "width": 12,
+    "height": 5,
+    "chartType": "line",
+    "category": "topic",
+    "categoryType": "msg",
+    "xAxisProperty": "",
+    "xAxisPropertyType": "timestamp",
+    "xAxisType": "time",
+    "xAxisFormat": "{HH}:{mm}:{ss}",
+    "xAxisFormatType": "custom",
+    "yAxisProperty": "payload",
+    "yAxisPropertyType": "msg",
+    "ymin": "0",
+    "ymax": "100",
+    "action": "append",
+    "showLegend": true,
+    "pointRadius": 2,
+    "pointShape": "circle",
+    "interpolation": "linear",
+    "removeOlder": 10,
+    "removeOlderUnit": "60",
+    "removeOlderPoints": "120",
+    "colors": [
+      "#087f8c",
+      "#e38627"
+    ],
+    "textColorDefault": true,
+    "gridColorDefault": true,
+    "x": 630,
+    "y": 220,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "lab5-mqtt-report",
+    "type": "mqtt in",
+    "z": "lab5-lab5",
+    "name": "Aggregated report",
+    "topic": "gateway/aggregated_report",
+    "qos": "1",
+    "datatype": "json",
+    "broker": "lab5-mqtt-local",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 150,
+    "y": 320,
+    "wires": [
+      [
+        "lab5-report-summary"
+      ]
+    ]
+  },
+  {
+    "id": "lab5-report-summary",
+    "type": "function",
+    "z": "lab5-lab5",
+    "name": "Report summary",
+    "outputs": 2,
+    "x": 390,
+    "y": 320,
+    "func": "const p=msg.payload; if (!p || !p.nodes) return null;\nreturn [{payload:`${p.node_count} nodes | ${p.message_count} messages | ${p.timestamp}`}, {payload:Object.entries(p.nodes).map(([node,v])=>({node,...v.data,received_at:v.received_at}))}];",
+    "wires": [
+      [
+        "lab5-report-text"
+      ],
+      [
+        "lab5-sensor-table"
+      ]
+    ]
+  },
+  {
+    "id": "lab5-report-text",
+    "type": "ui-text",
+    "z": "lab5-lab5",
+    "group": "lab5-sensors",
+    "order": 1,
+    "width": 12,
+    "height": 1,
+    "name": "Window summary",
+    "label": "Latest report",
+    "value": "payload",
+    "valueType": "msg",
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "wrapText": true,
+    "x": 650,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "lab5-sensor-table",
+    "type": "ui-table",
+    "z": "lab5-lab5",
+    "group": "lab5-sensors",
+    "order": 2,
+    "width": 12,
+    "height": 3,
+    "name": "Latest sensor values",
+    "label": "Simulated sensor data",
+    "maxrows": 0,
+    "autocols": true,
+    "showSearch": false,
+    "selectionType": "none",
+    "columns": [],
+    "x": 660,
+    "y": 370,
+    "wires": [
+      []
+    ]
+  }
+]
